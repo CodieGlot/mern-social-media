@@ -26,10 +26,10 @@ export class UsersService {
     }
 
     async findUserByIdOrUsername({ id, username }: { id?: string; username?: string }) {
-        return id ? this.userModel.findById(id) : this.userModel.findOne({ username }).exec();
+        return id ? this.userModel.findById(id) : this.userModel.findOne({ username });
     }
 
-    async getUsers(pageQueryDto: PageQueryDto) {
+    /* async paginateUsers(pageQueryDto: PageQueryDto) {
         const entities = await this.userModel.find().skip(pageQueryDto.skip).limit(pageQueryDto.limit).exec();
 
         const itemCount = await this.userModel.countDocuments();
@@ -37,5 +37,5 @@ export class UsersService {
         const pageMetaDto = new PageMetaDto({ pageQueryDto, itemCount });
 
         return new PageDto(entities, pageMetaDto);
-    }
+    } */
 }
