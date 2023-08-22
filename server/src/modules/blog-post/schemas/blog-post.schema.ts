@@ -29,6 +29,8 @@ export class BlogPost extends Document {
     likeCount: number;
 
     @ApiProperty({ type: Date })
-    @Prop({ type: Date, default: new Date() })
+    @Prop({ type: Date, default: Date.now() })
     createdAt: Date;
 }
+
+export const BlogPostSchema = SchemaFactory.createForClass(BlogPost);

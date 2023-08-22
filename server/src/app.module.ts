@@ -9,6 +9,7 @@ import { SharedModule } from './shared/shared.module';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { BlogPostModule } from './modules/blog-post/blog-post.module';
 
 /* let __setOptions = mongoose.Query.prototype.setOptions;
 
@@ -35,7 +36,8 @@ mongoose.Query.prototype.setOptions = function (options, overwrite) {
             inject: [ApiConfigService]
         }),
         AuthModule,
-        UsersModule
+        UsersModule,
+        BlogPostModule
     ],
     providers: [
         {

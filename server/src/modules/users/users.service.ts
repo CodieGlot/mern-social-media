@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { User } from './schemas';
 import { UserCredentialDto } from '../auth/dto/request';
 import { generateHash } from '../../common/utils';
-import { PageDto, PageMetaDto, PageQueryDto } from '../../common/dto';
 
 @Injectable()
 export class UsersService {
@@ -26,11 +25,16 @@ export class UsersService {
     }
 
     async findUserByIdOrUsername({ id, username }: { id?: string; username?: string }) {
-        return id ? this.userModel.findById(id) : this.userModel.findOne({ username });
+        return id ? await this.userModel.findById(id) : await this.userModel.findOne({ username });
     }
 
     /* async paginateUsers(pageQueryDto: PageQueryDto) {
-        const entities = await this.userModel.find().skip(pageQueryDto.skip).limit(pageQueryDto.limit).exec();
+        const entities = await this.userModel
+            .find()
+            .sort({ createdAt: pageQueryDto.sortOrder })
+            .skip(pageQueryDto.skip)
+            .limit(pageQueryDto.limit)
+            .exec();
 
         const itemCount = await this.userModel.countDocuments();
 

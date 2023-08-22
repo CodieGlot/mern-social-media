@@ -51,6 +51,8 @@ export class AuthService {
     async signup(dto: UserCredentialDto) {
         const user = await this.usersService.createUser(dto);
 
+        delete user.password;
+
         const authToken = await this.createAuthToken({ userId: user.id, role: user.role });
 
         return new LoginPayloadDto({
