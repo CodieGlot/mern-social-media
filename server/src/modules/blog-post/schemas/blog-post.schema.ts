@@ -6,27 +6,54 @@ import { Document } from 'mongoose';
 export class BlogPost extends Document {
     @ApiProperty()
     @Prop({ type: String })
-    title: string;
+    userId: string;
 
     @ApiProperty()
     @Prop({ type: String })
-    message: string;
+    username: string;
 
     @ApiProperty()
     @Prop({ type: String })
-    creator: string;
-
-    @ApiProperty({ type: [String] })
-    @Prop({ type: [String] })
-    tags: string[];
+    location: string;
 
     @ApiProperty()
     @Prop({ type: String })
-    selectedFile: string;
+    userPicturePath: string;
 
-    @ApiProperty({ type: Number, default: 0 })
-    @Prop({ type: Number, default: 0 })
-    likeCount: number;
+    @ApiProperty()
+    @Prop({ type: String })
+    description: string;
+
+    @ApiProperty()
+    @Prop({ type: String })
+    picturePath: string;
+
+    @ApiProperty()
+    @Prop({
+        type: [
+            {
+                userId: { type: String },
+                username: { type: String }
+            }
+        ],
+        default: [],
+        _id: false
+    })
+    likes: Array<{ userId: string; username: string }>;
+
+    @ApiProperty()
+    @Prop({
+        type: [
+            {
+                userId: { type: String },
+                username: { type: String },
+                userPicturePath: { type: String },
+                content: { type: String }
+            }
+        ],
+        default: []
+    })
+    comments: Array<{ userId: string; username: string; userPicturePath: string; content: string }>;
 
     @ApiProperty({ type: Date })
     @Prop({ type: Date, default: Date.now() })

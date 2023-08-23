@@ -16,7 +16,7 @@ import { PageDto, PageQueryDto, ResponseDto } from '../../common/dto';
 import { BlogPost } from './schemas';
 import { Auth, AuthUser } from '../../decorators';
 import { UserRole } from '../../constants';
-import { CreatePostDto, UpdatePostDto } from './dto/request';
+import { CreateCommentDto, CreatePostDto, UpdatePostDto } from './dto/request';
 import type { User } from '../users/schemas';
 
 @ApiTags('blog-post')
@@ -44,8 +44,10 @@ export class BlogPostController {
         type: BlogPost
     })
     @ApiOperation({ summary: 'Get post by id' })
-    findPostById(@Param('id') id: string) {
-        return this.blogPostService.findPostById(id);
+    async findPostById(@Param('id') id: string) {
+        const post = (await this.blogPostService.findPostById(id)).toObject();
+
+        return post;
     }
 
     @Post('')
@@ -57,7 +59,7 @@ export class BlogPostController {
     })
     @ApiOperation({ summary: 'Create post' })
     createPost(@Body() createPostDto: CreatePostDto, @AuthUser() user: User) {
-        return this.blogPostService.createPost(createPostDto, user.username);
+        return this.blogPostService.createPost(createPostDto, user);
     }
 
     @Patch(':id')
@@ -69,7 +71,7 @@ export class BlogPostController {
     })
     @ApiOperation({ summary: 'Update post by id' })
     updatePostById(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto, @AuthUser() user: User) {
-        return this.blogPostService.updatePostById(id, updatePostDto, user.username);
+        return this.blogPostService.updatePostById(id, updatePostDto, user);
     }
 
     @Delete(':id')
@@ -81,10 +83,10 @@ export class BlogPostController {
     })
     @ApiOperation({ summary: 'Delete post by id' })
     deletePostById(@Param('id') id: string, @AuthUser() user: User) {
-        return this.blogPostService.deletePostById(id, user.username);
+        return this.blogPostService.deletePostById(id, user);
     }
 
-    @Patch(':id/likePost')
+    @Patch(':id/like')
     @HttpCode(HttpStatus.OK)
     @Auth([UserRole.ADMIN, UserRole.USER])
     @ApiOkResponse({
@@ -92,7 +94,23 @@ export class BlogPostController {
         type: ResponseDto
     })
     @ApiOperation({ summary: 'Like post by id' })
-    likePostById(@Param('id') id: string) {
-        return this.blogPostService.likePostById(id);
+    likePostById(@Param('id') id: string, @AuthUser() user: User) {
+        return this.blogPostService.likePostById(id, user);
+    }
+
+    @Patch(':id/comment')
+    @HttpCode(HttpStatus.OK)
+    @Auth([UserRole.ADMIN, UserRole.USER])
+    @ApiOkResponse({
+        description: 'Comment post by id',
+        type: ResponseDto
+    })
+    @ApiOperation({ summary: 'Comment post by id' })
+    commentPostById(
+        @Param('id') id: string,
+        @Body() createCommentDto: CreateCommentDto,
+        @AuthUser() user: User
+    ) {
+        return this.blogPostService.commentPostById(id, createCommentDto, user);
     }
 }

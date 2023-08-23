@@ -17,6 +17,22 @@ export class User extends Document {
     @Exclude()
     @Prop({ type: String })
     password: string;
+
+    @ApiProperty({ type: String })
+    @Prop({ type: String, default: '' })
+    picturePath: string;
+
+    @ApiProperty({ type: () => [String] })
+    @Prop({ type: [String], default: [] })
+    friendList: [string];
+
+    @ApiProperty()
+    @Prop({ type: String, default: '' })
+    location: string;
+
+    @ApiProperty()
+    @Prop({ type: String, default: '' })
+    occupation: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

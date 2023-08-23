@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { BlogPost } from './schemas';
 import { PageDto, PageMetaDto, PageQueryDto, ResponseDto } from '../../common/dto';
-import { CreatePostDto, UpdatePostDto } from './dto/request';
+import { CreateCommentDto, CreatePostDto, UpdatePostDto } from './dto/request';
+import type { User } from '../users/schemas';
 
 @Injectable()
 export class BlogPostService {
@@ -34,10 +35,13 @@ export class BlogPostService {
         return post;
     }
 
-    async createPost(dto: CreatePostDto, username: string) {
+    async createPost(dto: CreatePostDto, user: User) {
         const newPost = new this.blogPostModel({
             ...dto,
-            creator: username
+            userId: user.id,
+            username: user.username,
+            location: user.location,
+            userPicturePath: user.picturePath
         });
 
         await newPost.save();
@@ -45,23 +49,23 @@ export class BlogPostService {
         return new ResponseDto({ message: 'Create post successfully' });
     }
 
-    async updatePostById(id: string, dto: UpdatePostDto, username: string) {
+    async updatePostById(id: string, dto: UpdatePostDto, user: User) {
         const post = await this.findPostById(id);
 
-        if (username !== post.creator) {
-            throw new UnauthorizedException('Unauthorized');
+        if (user.id !== post.userId) {
+            throw new UnauthorizedException();
         }
 
-        await this.blogPostModel.findByIdAndUpdate(id, dto, { new: true });
+        await this.blogPostModel.findByIdAndUpdate(id, dto);
 
         return new ResponseDto({ message: 'Post updated successfully' });
     }
 
-    async deletePostById(id: string, username: string) {
+    async deletePostById(id: string, user: User) {
         const post = await this.findPostById(id);
 
-        if (username !== post.creator) {
-            throw new UnauthorizedException('Unauthorized');
+        if (user.id !== post.userId) {
+            throw new UnauthorizedException();
         }
 
         await this.blogPostModel.findByIdAndRemove(id);
@@ -69,11 +73,41 @@ export class BlogPostService {
         return new ResponseDto({ message: 'Post deleted successfully' });
     }
 
-    async likePostById(id: string) {
+    async likePostById(id: string, user: User) {
         const post = await this.findPostById(id);
 
-        await this.blogPostModel.findByIdAndUpdate(id, { likeCount: post.likeCount + 1 }, { new: true });
+        let userIndex = -1;
 
-        return new ResponseDto({ message: 'Post liked successfully' });
+        for (let i = 0; i !== post.likes.length; i++) {
+            if (user.id === post.likes[i].userId) {
+                userIndex = i;
+                break;
+            }
+        }
+
+        if (userIndex === -1) {
+            post.likes.push({ userId: user.id, username: user.username });
+        } else {
+            post.likes.splice(userIndex, 1);
+        }
+
+        await this.blogPostModel.findByIdAndUpdate(id, { likes: post.likes });
+
+        return new ResponseDto({ message: 'Post liked/unliked successfully' });
+    }
+
+    async commentPostById(id: string, dto: CreateCommentDto, user: User) {
+        const post = await this.findPostById(id);
+
+        post.comments.push({
+            userId: user.id,
+            username: user.username,
+            content: dto.content,
+            userPicturePath: user.picturePath
+        });
+
+        await this.blogPostModel.findByIdAndUpdate(id, { comments: post.comments });
+
+        return new ResponseDto({ message: 'User has commented the post' });
     }
 }

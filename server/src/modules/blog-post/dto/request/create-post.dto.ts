@@ -2,14 +2,8 @@ import { StringField } from '../../../../decorators';
 
 export class CreatePostDto {
     @StringField()
-    title: string;
+    description: string;
 
     @StringField()
-    message: string;
-
-    @StringField({ each: true })
-    tags: string[];
-
-    @StringField()
-    selectedFile: string;
+    picturePath: string;
 }

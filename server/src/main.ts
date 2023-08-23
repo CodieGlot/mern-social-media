@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { SharedModule } from './shared/shared.module';
 import { setupSwagger } from './setup-swagger';
@@ -9,6 +10,9 @@ import { HttpExceptionFilter } from './filters';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
+
+    app.use(helmet());
+
     app.enableCors();
 
     app.setGlobalPrefix('api');

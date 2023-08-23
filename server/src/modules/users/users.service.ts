@@ -1,9 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './schemas';
 import { UserCredentialDto } from '../auth/dto/request';
 import { generateHash } from '../../common/utils';
+import { ResponseDto } from '../../common/dto';
 
 @Injectable()
 export class UsersService {
@@ -26,6 +27,31 @@ export class UsersService {
 
     async findUserByIdOrUsername({ id, username }: { id?: string; username?: string }) {
         return id ? await this.userModel.findById(id) : await this.userModel.findOne({ username });
+    }
+
+    async addRemoveFriendById(id: string, friendId: string, user: User) {
+        if (id !== user.id) {
+            throw new UnauthorizedException();
+        }
+
+        let friendIndex = -1;
+
+        for (let i = 0; i !== user.friendList.length; i++) {
+            if (friendId === user.friendList[i]) {
+                friendIndex = i;
+                break;
+            }
+        }
+
+        if (friendIndex === -1) {
+            user.friendList.push(friendId);
+        } else {
+            user.friendList.splice(friendIndex, 1);
+        }
+
+        await this.userModel.findByIdAndUpdate(id, { friendList: user.friendList });
+
+        return new ResponseDto({ message: 'Friend added/removed successfully' });
     }
 
     /* async paginateUsers(pageQueryDto: PageQueryDto) {
