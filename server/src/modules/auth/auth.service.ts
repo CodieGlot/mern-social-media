@@ -6,7 +6,7 @@ import { ApiConfigService } from '../../shared/services/api-config.service';
 import { AuthToken, UserRole } from '../../constants';
 import { UserNotFoundException } from '../../exceptions';
 import { AuthTokenPayloadDto, LoginPayloadDto } from './dto/response';
-import { validateHash } from '../../common/utils';
+import { validateHash, convertFromMongooseToPlainObject } from '../../common/utils';
 
 @Injectable()
 export class AuthService {
@@ -43,7 +43,7 @@ export class AuthService {
         const authToken = await this.createAuthToken({ userId: user.id, role: user.role });
 
         return new LoginPayloadDto({
-            user,
+            user: convertFromMongooseToPlainObject(user),
             authToken
         });
     }
@@ -56,7 +56,7 @@ export class AuthService {
         const authToken = await this.createAuthToken({ userId: user.id, role: user.role });
 
         return new LoginPayloadDto({
-            user,
+            user: convertFromMongooseToPlainObject(user),
             authToken
         });
     }

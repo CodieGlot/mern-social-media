@@ -18,6 +18,7 @@ import { Auth, AuthUser } from '../../decorators';
 import { UserRole } from '../../constants';
 import { CreateCommentDto, CreatePostDto, UpdatePostDto } from './dto/request';
 import type { User } from '../users/schemas';
+import { convertFromMongooseToPlainObject } from '../../common/utils';
 
 @ApiTags('blog-post')
 @Controller('blog-post')
@@ -45,9 +46,9 @@ export class BlogPostController {
     })
     @ApiOperation({ summary: 'Get post by id' })
     async findPostById(@Param('id') id: string) {
-        const post = (await this.blogPostService.findPostById(id)).toObject();
+        const post = await this.blogPostService.findPostById(id);
 
-        return post;
+        return convertFromMongooseToPlainObject(post);
     }
 
     @Post('')

@@ -43,7 +43,7 @@ export class AuthController {
     })
     @ApiOperation({ summary: 'Get current user info' })
     getCurrentUser(@AuthUser() user: User) {
-        return user;
+        return { ...user.toObject(), _id: user.id };
     }
 
     @Post('refresh-token')
