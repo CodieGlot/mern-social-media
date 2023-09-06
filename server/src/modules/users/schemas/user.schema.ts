@@ -23,8 +23,17 @@ export class User extends Document {
     picturePath: string;
 
     @ApiProperty({ type: () => [String] })
-    @Prop({ type: [String], default: [] })
-    friendList: [string];
+    @Prop({
+        type: [
+            {
+                userId: { type: String },
+                username: { type: String }
+            }
+        ],
+        default: [],
+        _id: false
+    })
+    friendList: Array<{ userId: string; username: string }>;
 
     @ApiProperty()
     @Prop({ type: String, default: '' })

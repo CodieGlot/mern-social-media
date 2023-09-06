@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './schemas';
@@ -34,17 +34,23 @@ export class UsersService {
             throw new UnauthorizedException();
         }
 
+        const friend = await this.findUserByIdOrUsername({ id: friendId });
+
+        if (!friend) {
+            throw new BadRequestException('Friend ID does not exist');
+        }
+
         let friendIndex = -1;
 
         for (let i = 0; i !== user.friendList.length; i++) {
-            if (friendId === user.friendList[i]) {
+            if (friendId === user.friendList[i].userId) {
                 friendIndex = i;
                 break;
             }
         }
 
         if (friendIndex === -1) {
-            user.friendList.push(friendId);
+            user.friendList.push({ userId: friendId, username: friend.username });
         } else {
             user.friendList.splice(friendIndex, 1);
         }
