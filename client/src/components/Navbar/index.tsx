@@ -38,7 +38,7 @@ declare module "@mui/material/styles" {
   }
 }
 
-export const Navbar = () => {
+const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -207,3 +207,5 @@ export const Navbar = () => {
     </FlexBetween>
   );
 };
+
+export default Navbar;

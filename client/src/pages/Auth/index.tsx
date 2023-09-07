@@ -1,9 +1,12 @@
 import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
-import { Form } from "./Form";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
 
-export const AuthPage = () => {
+const AuthPage = () => {
   const theme = useTheme();
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+
+  const isLogin = false;
 
   return (
     <Box>
@@ -28,8 +31,10 @@ export const AuthPage = () => {
         <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
           Welcome to CodieMedia, the Social Media for Codieism!
         </Typography>
-        <Form />
+        {isLogin ? <LoginForm /> : <RegisterForm />}
       </Box>
     </Box>
   );
 };
+
+export default AuthPage;

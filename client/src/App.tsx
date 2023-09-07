@@ -4,9 +4,9 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./common";
 import { useAppSelector } from "./hooks";
-import { AuthPage } from "./pages/Auth";
-import { HomePage } from "./pages/Home";
-import { ProfilePage } from "./pages/Profile";
+import AuthPage from "./pages/Auth";
+import HomePage from "./pages/Home";
+import ProfilePage from "./pages/Profile";
 
 function App() {
   const themeMode = useAppSelector((state) => state.themeMode);
